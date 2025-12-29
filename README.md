@@ -1,6 +1,6 @@
 # My HackPad
 
-My HackPad is a 6-key (2x3) macropad built around the Seeed XIAO RP2040. It includes an EC11 rotary encoder for quick control and a 0.91 inch 128x32 I2C OLED display for status and layer info. The goal was a compact daily-driver pad for editing and media control with a clean, beginner-friendly KiCad design.
+My HackPad is a 6-key (2x3) macropad built around the Seeed XIAO RP2040. It includes an EC11 rotary encoder for quick control and a 0.91 inch 128x32 I2C OLED display for status and layer info.
 
 ## Features
 - 6x MX-style keys (2 columns x 3 rows matrix)
