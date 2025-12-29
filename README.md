@@ -1,10 +1,10 @@
 # My HackPad
 
-My HackPad is a 6-key (2x3) macropad built around the Seeed XIAO RP2040. It includes an EC11 rotary encoder for quick control and a 0.91 inch 128x32 I2C OLED display for status and layer info.
+My HackPad is a 6-key (2x3) macropad built around the Seeed XIAO RP2040. It includes 2 EC11 rotary encoders (one for volume, one for timeline scrubbing) and a 0.91 inch 128x32 I2C OLED display (SSD1306) for status and layer info.
 
 ## Features
 - 6x MX-style keys (2 columns x 3 rows matrix)
-- EC11 rotary encoder (volume on Layer 0, track control on Layer 1)
+- 2x EC11 rotary encoder 1 for Volume, the other is for moving through video timeline
 - 0.91 inch 128x32 I2C OLED (pin order: GND-VCC-SCL-SDA)
 - KMK (CircuitPython) firmware with layers
 - 3D-printed case designed to fit the PCB, OLED, and encoder cleanly
@@ -16,8 +16,8 @@ My HackPad is a 6-key (2x3) macropad built around the Seeed XIAO RP2040. It incl
 
 Notes:
 - Keys are wired as a 2x3 matrix with 1N4148 diodes to prevent ghosting.
-- OLED uses I2C (SDA/SCL) and is powered from 3.3V.
-- Encoder uses two GPIO pins plus GND common.
+- OLED uses I2C (SDA/SCL) and is powered from VBUS (5V).
+- There are two encoders; each uses two GPIO pins plus a shared GND common (4 GPIO total).
 
 ## PCB
 <img src="assets/pcb.png" alt="PCB" width="600"/>
@@ -46,10 +46,12 @@ This project uses KMK firmware (Python) for fast iteration.
 Default behavior:
 - Layer 0:
   - Keys: common editing macros (copy/paste/undo/redo, etc.)
-  - Encoder: volume up/down
+  - Encoder 1: volume up/down
+  - Encoder 2: timeline scrub (left/right)
 - Layer 1:
   - Keys: media controls
-  - Encoder: previous/next track
+  - Encoder 1: previous/next track
+  - Encoder 2: fine scrub (Shift + left/right)
 
 Firmware file:
 - `firmware/main.py`
@@ -61,8 +63,8 @@ Electronics:
 - 1x Seeed XIAO RP2040
 - 6x MX-style switches
 - 6x 1N4148 diodes (DO-35, through-hole)
-- 1x EC11 rotary encoder
-- 1x 0.91 inch 128x32 I2C OLED display (pin order: GND-VCC-SCL-SDA)
+- 2x EC11 rotary encoders
+- 1x 0.91 inch 128x32 I2C OLED display (SSD1306, pin order: GND-VCC-SCL-SDA)
 - 1x 1x4 2.54mm pin header (for the OLED)
 
 Hardware and Case:

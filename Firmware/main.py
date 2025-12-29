@@ -1,90 +1,64 @@
 import board
-
 from kmk.kmk_keyboard import KMKKeyboard
+from kmk.scanners.keypad import KeysScanner
 from kmk.keys import KC
-from kmk.scanners import DiodeOrientation
-from kmk.modules.layers import Layers
 from kmk.modules.encoder import EncoderHandler
+from kmk.modules.layers import Layers
 from kmk.extensions.media_keys import MediaKeys
-
-from kmk.extensions.oled import Oled, TextEntry
-
-
-def pick(*names):
-    for n in names:
-        if hasattr(board, n):
-            return getattr(board, n)
-    raise ValueError("Missing pin names: " + ", ".join(names))
-
-
-COL0 = pick("GP0", "D0")
-COL1 = pick("GP1", "D1")
-
-ROW0 = pick("GP2", "D2")
-ROW1 = pick("GP3", "D3")
-ROW2 = pick("GP4", "D4")
-
-ENC_A = pick("GP26", "A0")
-ENC_B = pick("GP27", "A1")
-
-OLED_SDA = pick("GP6", "SDA", "D6")
-OLED_SCL = pick("GP7", "SCL", "D7")
-
+from kmk.modules.modtap import ModTap
+from adafruit_display_text import label
+import adafruit_ssd1306
+import busio
 
 keyboard = KMKKeyboard()
 
-keyboard.col_pins = (COL0, COL1)
-keyboard.row_pins = (ROW0, ROW1, ROW2)
-
-keyboard.diode_orientation = DiodeOrientation.COL2ROW
-
+encoder_handler = EncoderHandler()
+keyboard.modules.append(encoder_handler)
+keyboard.modules.append(Layers())
 keyboard.extensions.append(MediaKeys())
 
-layers = Layers()
-keyboard.modules.append(layers)
+col_pins = [board.D0, board.D1]
+row_pins = [board.D2, board.D3, board.D4]
 
-encoder = EncoderHandler()
-keyboard.modules.append(encoder)
+keyboard.col_pins = col_pins
+keyboard.row_pins = row_pins
+keyboard.diode_orientation = DiodeOrientation.COL2ROW
 
-encoder.pins = (
-    (ENC_A, ENC_B, None, False, 4),
-)
+i2c = busio.I2C(board.GPIO07, board.GPIO06)
+oled = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c)
+current_volume = 50
 
-encoder.map = [
-    ((KC.VOLD, KC.VOLU, KC.NO),),  
-    ((KC.MPRV, KC.MNXT, KC.NO),),    
+encoder_handler.pins = ((board.A, board.B, None, False),
+                       (board.C, board.D, None, False))
+
+encoder_handler.map = [ 
+    ((KC.VOLU, KC.VOLD), (KC.VOLU, KC.VOLD))
 ]
 
-oled = Oled(
-    sda=OLED_SDA,
-    scl=OLED_SCL,
-    width=128,
-    height=32,
-    entries=[
-        TextEntry(text="Alistair HackPad", x=0, y=0),
-        TextEntry(text="L0: EDIT", x=0, y=16, layer=0),
-        TextEntry(text="L1: MEDIA", x=0, y=16, layer=1),
-    ],
-    dim_time=20,
-    off_time=60,
-)
-keyboard.extensions.append(oled)
-
-_______ = KC.TRNS
+def update_oled():
+    oled.fill(0)
+    text = f"Volume: {current_volume}%"
+    text_area = label.Label(terminalio.FONT, text=text, x=0, y=15)
+    oled.show()
 
 keyboard.keymap = [
     [
-        KC.LGUI(KC.C),              KC.LGUI(KC.V),
-        KC.LGUI(KC.Z),              KC.LGUI(KC.LSFT(KC.Z)),
-        KC.LGUI(KC.SPC),            KC.MO(1),
-    ],
-
-    [
-        KC.MPLY,                    KC.MUTE,
-        KC.MPRV,                    KC.MNXT,
-        KC.VOLD,                    _______,
-    ],
+        KC.N0, KC.N1, 
+        KC.N2, KC.N3,
+        KC.N4, KC.N5,  
+    ]
 ]
 
-if __name__ == "__main__":
+def on_encoder_update(keyboard, encoder_id, state):
+    global current_volume
+    if state:
+        current_volume = min(100, current_volume + 5)
+    else:
+        current_volume = max(0, current_volume - 5)
+    update_oled()
+
+encoder_handler.on_move = on_encoder_update
+
+if __name__ == '__main__':
+    update_oled()
     keyboard.go()
