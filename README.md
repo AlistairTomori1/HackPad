@@ -30,6 +30,7 @@ Notes:
 
 ## Case and CAD
 <img src="assets/case.png" alt="Case CAD" width="600"/>
+<img src="assets/case_empty.png" alt="Case Empty CAD" width="600"/>
 
 How it fits together:
 - Top plate holds switches and keycaps.
@@ -66,12 +67,11 @@ Electronics:
 - 2x EC11 rotary encoders
 - 1x 0.91 inch 128x32 I2C OLED display (SSD1306, pin order: GND-VCC-SCL-SDA)
 - 1x 1x4 2.54mm pin header (for the OLED)
+- 1x PCB board
 
 Hardware and Case:
-- 6x keycaps (DSA or any MX-compatible)
+- 6x Blank DSA keycaps (White)
 - 3D-printed case (top and bottom, or top/middle/bottom depending on your design)
-- Optional, if your case uses M3 hardware:
-  - 4x M3x16mm screws
-  - 4x M3 heatset inserts (5x4mm)
-  - Optional extra screws/inserts depending on your CAD
+- 4x M3x16mm screws
+- 4x M3 heatset inserts (5x4mm)
 
